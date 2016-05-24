@@ -4,9 +4,21 @@ indent() {
   sed -u 's/^/       /'
 }
 
+move(){
+  if [ -d $LIB_DIR ]; then
+    cd $LIB_DIR
+    mv build/include $VENDOR_DIR
+    mv build/lib $VENDOR_DIR
+    mv build/share $VENDOR_DIR
+    cd $CURRENT_DIR
+  fi
+}
+
 echo "Install gmplib"
 
 BUILD_DIR=$1
+LIB_DIR=$BUILD_DIR/gmplib
+PREFIX_DIR=$LIB_DIR/build
 VENDOR_DIR="vendor"
 DOWNLOAD_URL="https://gmplib.org/download/gmp/gmp-6.1.0.tar.xz"
 
@@ -14,5 +26,76 @@ echo "DOWNLOAD_URL = " $DOWNLOAD_URL | indent
 
 cd $BUILD_DIR
 mkdir $VENDOR_DIR
-cd $VENDOR_DIR
+mkdir $LIB_DIR
 curl -L --silent $DOWNLOAD_URL | tar xz
+cd gmp-6.1.0
+./configure --prefix=$PREFIX_DIR
+make
+make install
+move
+cd $BUILD_DIR
+
+echo "Installing libnettle"
+LIB_DIR=$BUILD_DIR/libnettle
+PREFIX_DIR=$LIB_DIR/build
+DOWNLOAD_URL="https://ftp.gnu.org/gnu/nettle/nettle-3.1.tar.gz"
+
+
+mkdir $VENDOR_DIR
+mkdir $LIB_DIR
+curl -L --silent $DOWNLOAD_URL | tar xz
+cd gmp-6.1.0
+./configure --prefix=$PREFIX_DIR
+make
+make install
+move
+cd $BUILD_DIR
+
+echo "Installing gnults"
+LIB_DIR=$BUILD_DIR/gnults
+PREFIX_DIR=$LIB_DIR/build
+DOWNLOAD_URL="https://ftp.gnu.org/gnu/gnutls/gnutls-3.1.5.tar.xz"
+
+mkdir $VENDOR_DIR
+mkdir $LIB_DIR
+curl -L --silent $DOWNLOAD_URL | tar xz
+cd gmp-6.1.0
+./configure --prefix=$PREFIX_DIR
+make
+make install
+move
+cd $BUILD_DIR
+
+echo "Installing ffmpeg"
+LIB_DIR=$BUILD_DIR/ffmepg
+PREFIX_DIR=$LIB_DIR/build
+DOWNLOAD_URL="http://johnvansickle.com/ffmpeg/releases/ffmpeg-release-32bit-static.tar.xz"
+
+mkdir $VENDOR_DIR
+mkdir $LIB_DIR
+curl -L --silent $DOWNLOAD_URL | tar xz
+cd gmp-6.1.0
+PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure \
+  --prefix="$HOME/ffmpeg_build" \
+  --pkg-config-flags="--static" \
+  --extra-cflags="-I$HOME/ffmpeg_build/include" \
+  --extra-ldflags="-L$HOME/ffmpeg_build/lib" \
+  --bindir="$HOME/bin" \
+  --enable-gpl \
+  --enable-libass \
+  --enable-libfdk-aac \
+  --enable-libfreetype \
+  --enable-libmp3lame \
+  --enable-libopus \
+  --enable-libtheora \
+  --enable-libvorbis \
+  --enable-libvpx \
+  --enable-libx264 \
+  --enable-libx265 \
+  --enable-nonfree \
+  --enable-gnutls
+PATH="$HOME/bin:$PATH" make
+make install
+make distclean
+move
+cd $BUILD_DIR
