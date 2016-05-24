@@ -21,11 +21,12 @@ LIB_DIR=$BUILD_DIR/gmplib
 PREFIX_DIR=$LIB_DIR/build
 VENDOR_DIR="vendor"
 DOWNLOAD_URL="https://gmplib.org/download/gmp/gmp-6.1.0.tar.xz"
+mkdir $PREFIX_DIR
+mkdir $VENDOR_DIR
 
 echo "DOWNLOAD_URL = " $DOWNLOAD_URL | indent
 
 cd $BUILD_DIR
-mkdir $VENDOR_DIR
 mkdir $LIB_DIR
 curl -L --silent $DOWNLOAD_URL | tar xz
 cd gmp-6.1.0
@@ -39,9 +40,9 @@ echo "Installing libnettle"
 LIB_DIR=$BUILD_DIR/libnettle
 PREFIX_DIR=$LIB_DIR/build
 DOWNLOAD_URL="https://ftp.gnu.org/gnu/nettle/nettle-3.1.tar.gz"
+mkdir $PREFIX_DIR
 
 
-mkdir $VENDOR_DIR
 mkdir $LIB_DIR
 curl -L --silent $DOWNLOAD_URL | tar xz
 cd gmp-6.1.0
@@ -55,8 +56,8 @@ echo "Installing gnults"
 LIB_DIR=$BUILD_DIR/gnults
 PREFIX_DIR=$LIB_DIR/build
 DOWNLOAD_URL="https://ftp.gnu.org/gnu/gnutls/gnutls-3.1.5.tar.xz"
+mkdir $PREFIX_DIR
 
-mkdir $VENDOR_DIR
 mkdir $LIB_DIR
 curl -L --silent $DOWNLOAD_URL | tar xz
 cd gmp-6.1.0
@@ -70,8 +71,8 @@ echo "Installing ffmpeg"
 LIB_DIR=$BUILD_DIR/ffmepg
 PREFIX_DIR=$LIB_DIR/build
 DOWNLOAD_URL="http://johnvansickle.com/ffmpeg/releases/ffmpeg-release-32bit-static.tar.xz"
+mkdir $PREFIX_DIR
 
-mkdir $VENDOR_DIR
 mkdir $LIB_DIR
 curl -L --silent $DOWNLOAD_URL | tar xz
 cd gmp-6.1.0
