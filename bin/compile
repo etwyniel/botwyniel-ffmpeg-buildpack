@@ -10,16 +10,16 @@ move(){
     mv build/include $VENDOR_DIR
     mv build/lib $VENDOR_DIR
     mv build/share $VENDOR_DIR
-    cd $CURRENT_DIR
+    cd $BUILD_DIR
   fi
 }
 
-echo "Install gmplib"
+echo "Installing gmplib"
 
 BUILD_DIR=$1
 LIB_DIR=$BUILD_DIR/gmplib
 PREFIX_DIR=$LIB_DIR/build
-VENDOR_DIR="vendor"
+VENDOR_DIR=$BUILD_DIR/vendor
 DOWNLOAD_URL="https://gmplib.org/download/gmp/gmp-6.1.0.tar.xz"
 mkdir $PREFIX_DIR
 mkdir $VENDOR_DIR
