@@ -27,8 +27,10 @@ mkdir $VENDOR_DIR
 echo "DOWNLOAD_URL = " $DOWNLOAD_URL | indent
 
 cd $BUILD_DIR
-mkdir $LIB_DIR
-curl -L --silent $DOWNLOAD_URL | tar xz
+mkdir -p $LIB_DIR
+cd $LIB_DIR
+curl -L --silent $DOWNLOAD_URL
+tar xz gmp-6.1.0.tar.xz
 cd gmp-6.1.0
 ./configure --prefix=$PREFIX_DIR
 make
@@ -44,8 +46,9 @@ mkdir $PREFIX_DIR
 
 
 mkdir $LIB_DIR
-curl -L --silent $DOWNLOAD_URL | tar xz
-cd gmp-6.1.0
+curl -L --silent $DOWNLOAD_URL
+tar xz nettle-3.1.tar.gz
+cd nettle-3.1
 ./configure --prefix=$PREFIX_DIR
 make
 make install
@@ -59,8 +62,9 @@ DOWNLOAD_URL="https://ftp.gnu.org/gnu/gnutls/gnutls-3.1.5.tar.xz"
 mkdir $PREFIX_DIR
 
 mkdir $LIB_DIR
-curl -L --silent $DOWNLOAD_URL | tar xz
-cd gmp-6.1.0
+curl -L --silent $DOWNLOAD_URL
+tar xz gnutls-3.1.5.tar.xz
+cd gnutls-3.1.5
 ./configure --prefix=$PREFIX_DIR
 make
 make install
@@ -74,8 +78,9 @@ DOWNLOAD_URL="http://johnvansickle.com/ffmpeg/releases/ffmpeg-release-32bit-stat
 mkdir $PREFIX_DIR
 
 mkdir $LIB_DIR
-curl -L --silent $DOWNLOAD_URL | tar xz
-cd gmp-6.1.0
+curl -L --silent $DOWNLOAD_URL
+tar xz ffmpeg-release-32bit-static.tar.xz
+cd ffmpeg-release-32bit-static
 PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure \
   --prefix="$HOME/ffmpeg_build" \
   --pkg-config-flags="--static" \
