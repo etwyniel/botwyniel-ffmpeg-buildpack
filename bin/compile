@@ -19,7 +19,7 @@ echo "Installing gmplib"
 BUILD_DIR=$1
 LIB_DIR=$BUILD_DIR/gmplib
 PREFIX_DIR=$LIB_DIR/build
-VENDOR_DIR=/app/.heroku/vendor/lib
+VENDOR_DIR=/app/.heroku/vendor
 DOWNLOAD_URL="https://gmplib.org/download/gmp/gmp-6.1.0.tar.xz"
 mkdir $PREFIX_DIR
 mkdir $VENDOR_DIR
@@ -32,10 +32,9 @@ cd $LIB_DIR
 curl -L --silent $DOWNLOAD_URL
 tar xz gmp-6.1.0.tar.xz
 cd gmp-6.1.0
-./configure --prefix=$PREFIX_DIR
+./configure --prefix=$VENDOR_DIR
 make
 make install
-move
 cd $BUILD_DIR
 
 echo "Installing libnettle"
@@ -65,7 +64,7 @@ mkdir $LIB_DIR
 curl -L --silent $DOWNLOAD_URL
 tar xz gnutls-3.1.5.tar.xz
 cd gnutls-3.1.5
-./configure --prefix=$PREFIX_DIR
+./configure --prefix=$VENDOR_DIR
 make
 make install
 move
@@ -82,7 +81,7 @@ curl -L --silent $DOWNLOAD_URL
 tar xz ffmpeg-release-32bit-static.tar.xz
 cd ffmpeg-release-32bit-static
 PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure \
-  --prefix="$HOME/ffmpeg_build" \
+  --prefix="$VENDOR_DIR \
   --pkg-config-flags="--static" \
   --extra-cflags="-I$HOME/ffmpeg_build/include" \
   --extra-ldflags="-L$HOME/ffmpeg_build/lib" \
