@@ -46,8 +46,10 @@ tar xf nettle-3.1.tar.gz
 cd nettle-3.1
 ./configure --prefix=$PREFIX_DIR --disable-static
 make
-make install
-move
+make install &&
+chmod   -v   755 /usr/lib/lib{hogweed,nettle}.so &&
+install -v -m755 -d /usr/share/doc/nettle-3.1 &&
+install -v -m644 nettle.html /usr/share/doc/nettle-3.1
 cd $BUILD_DIR
 
 echo "Installing gnults"
@@ -93,5 +95,4 @@ PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./conf
 PATH="$HOME/bin:$PATH" make
 make install
 make distclean
-move
 cd $BUILD_DIR
