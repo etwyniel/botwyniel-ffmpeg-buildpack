@@ -82,8 +82,8 @@ DOWNLOAD_URL="http://johnvansickle.com/ffmpeg/release-source/ffmpeg-3.0.2.tar.xz
 mkdir $LIB_DIR
 cd $LIB_DIR
 wget $DOWNLOAD_URL
-tar xf ffmpeg-release-32bit-static.tar.xz
-cd ffmpeg-3.0.2-32bit-static
+tar xf ffmpeg-3.0.2.tar.xz
+cd ffmpeg-3.0.2
 PKG_CONFIG_PATH="$LIB_DIR/lib/pkgconfig" ./configure \
   --prefix="$LIB_DIR_DIR" \
   --pkg-config-flags="--static" \
