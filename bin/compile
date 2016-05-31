@@ -7,9 +7,9 @@ indent() {
 move(){
   if [ -d $LIB_DIR ]; then
     cd $LIB_DIR
-    mv build/include $VENDOR_DIR
-    mv build/lib $VENDOR_DIR
-    mv build/share $VENDOR_DIR
+    mv -f "$LIB_DIR/include"/* $VENDOR_DIR/include
+    mv -f "$LIB_DIR/lib"/* $VENDOR_DIR/lib
+    mv -f "$LIB_DIR/share"/* $VENDOR_DIR/share
     cd $BUILD_DIR
   fi
 }
@@ -17,8 +17,10 @@ move(){
 echo "Installing gmplib"
 
 BUILD_DIR=$1
+echo $BUILD_DIR
 LIB_DIR=$BUILD_DIR/gmplib
 VENDOR_DIR=/app/.heroku/vendor
+PATH="$PATH:$VENDOR_DIR/lib"
 DOWNLOAD_URL="https://gmplib.org/download/gmp/gmp-6.1.0.tar.xz"
 
 echo "DOWNLOAD_URL = " $DOWNLOAD_URL | indent
@@ -26,59 +28,68 @@ echo "DOWNLOAD_URL = " $DOWNLOAD_URL | indent
 cd $BUILD_DIR
 mkdir -p $LIB_DIR
 cd $LIB_DIR
-curl -L --silent $DOWNLOAD_URL
+wget $DOWNLOAD_URL
 tar xf gmp-6.1.0.tar.xz
 cd gmp-6.1.0
-./configure --prefix=$VENDOR_DIR
+./configure --prefix=$LIB_DIR
 make
 make install
+move
 cd $BUILD_DIR
 
 echo "Installing libnettle"
 LIB_DIR=$BUILD_DIR/libnettle
-DOWNLOAD_URL="https://ftp.gnu.org/gnu/nettle/nettle-3.1.tar.gz"
+DOWNLOAD_URL="https://ftp.gnu.org/gnu/nettle/nettle-2.5.tar.gz"
 mkdir $PREFIX_DIR
 
 
-mkdir $LIB_DIR
-curl -L --silent $DOWNLOAD_URL
-tar xf nettle-3.1.tar.gz
-cd nettle-3.1
-./configure --prefix=$PREFIX_DIR --disable-static
+mkdir -p $LIB_DIR
+cd $LIB_DIR
+wget $DOWNLOAD_URL
+tar xf nettle-2.5.tar.gz
+cd nettle-2.5
+./configure --prefix=$LIB_DIR \
+  --disable-static \
+  --enable-shared
 make
 make install &&
-chmod   -v   755 /usr/lib/lib{hogweed,nettle}.so &&
-install -v -m755 -d /usr/share/doc/nettle-3.1 &&
-install -v -m644 nettle.html /usr/share/doc/nettle-3.1
+chmod   -v   755 /app/.heroku/vendor/lib/lib{hogweed,nettle}.so &&
+install -v -m755 -d /app/.heroku/vendor/share/doc/nettle-2.5 &&
+install -v -m644 nettle.html /app/.heroku/vendor/share/doc/nettle-2.5
+move
 cd $BUILD_DIR
 
-echo "Installing gnults"
-LIB_DIR=$BUILD_DIR/gnults
+echo "Installing gnutls"
+LIB_DIR=$BUILD_DIR/gnutls
 DOWNLOAD_URL="https://ftp.gnu.org/gnu/gnutls/gnutls-3.1.5.tar.xz"
-
+	
 mkdir $LIB_DIR
-curl -L --silent $DOWNLOAD_URL
+cd $LIB_DIR
+wget $DOWNLOAD_URL
 tar xf gnutls-3.1.5.tar.xz
 cd gnutls-3.1.5
-./configure --prefix=$VENDOR_DIR
+./configure --prefix=$LIB_DIR \
+  --CFLAGS='-I/app/.heroku/vendor/include -L/app/.heroku/vendor/lib'
 make
 make install
+move
 cd $BUILD_DIR
 
 echo "Installing ffmpeg"
-LIB_DIR=$BUILD_DIR/ffmepg
-DOWNLOAD_URL="http://johnvansickle.com/ffmpeg/releases/ffmpeg-release-32bit-static.tar.xz"
+LIB_DIR=$BUILD_DIR/ffmpeg
+DOWNLOAD_URL="http://johnvansickle.com/ffmpeg/release-source/ffmpeg-3.0.2.tar.xz"
 
 mkdir $LIB_DIR
-curl -L --silent $DOWNLOAD_URL
+cd $LIB_DIR
+wget $DOWNLOAD_URL
 tar xf ffmpeg-release-32bit-static.tar.xz
-cd ffmpeg-release-32bit-static
-PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure \
-  --prefix="$VENDOR_DIR" \
+cd ffmpeg-3.0.2-32bit-static
+PKG_CONFIG_PATH="$LIB_DIR/lib/pkgconfig" ./configure \
+  --prefix="$LIB_DIR_DIR" \
   --pkg-config-flags="--static" \
-  --extra-cflags="-I$HOME/ffmpeg_build/include" \
-  --extra-ldflags="-L$HOME/ffmpeg_build/lib" \
-  --bindir="$HOME/bin" \
+  --extra-cflags="-I$LIB_DIR/include" \
+  --extra-ldflags="-L$LIB_DIR/lib" \
+  --bindir="$VENDOR_DIR/bin" \
   --enable-gpl \
   --enable-libass \
   --enable-libfdk-aac \
@@ -91,8 +102,9 @@ PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./conf
   --enable-libx264 \
   --enable-libx265 \
   --enable-nonfree \
+  --enable-gmp \
   --enable-gnutls
-PATH="$HOME/bin:$PATH" make
+make
 make install
 make distclean
 cd $BUILD_DIR
