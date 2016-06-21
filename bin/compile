@@ -1,94 +1,12 @@
 #!/bin/sh
 
-move(){
-  if [ -d $LIB_DIR ]; then
-    cd $LIB_DIR
-    mv -f "$LIB_DIR/include"/* $VENDOR_DIR/include
-    mv -f "$LIB_DIR/lib"/* $VENDOR_DIR/lib
-    mv -f "$LIB_DIR/share"/* $VENDOR_DIR/share
-    cd $BUILD_DIR
-  fi
-}
-
-echo "Installing gmplib"
-
 BUILD_DIR=$1
 mkdir $BUILD_DIR
 echo $BUILD_DIR
-LIB_DIR=$BUILD_DIR/gmplib
 VENDOR_DIR=/app/.heroku/vendor
 mkdir $VENDOR_DIR/include
 mkdir $VENDOR_DIR/share/info
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VENDOR_DIR/lib
-DOWNLOAD_URL="https://gmplib.org/download/gmp/archive/gmp-3.1.tar.xz"
-
-echo "DOWNLOAD_URL = " $DOWNLOAD_URL
-
-cd $BUILD_DIR
-mkdir $LIB_DIR
-cd $LIB_DIR
-wget $DOWNLOAD_URL
-tar xf gmp-3.1.tar.xz
-cd gmp-3.1
-./configure --prefix=$VENDOR_DIR
-make
-make install
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$LIBDIR
-LD_RUN_PATH=$LD_RUN_PATH:$LIBDIR
-cd ..
-# mv $LIB_DIR/lib/* $VENDOR_DIR/lib
-# mv $LIB_DIR/include/* $VENDOR_DIR/include
-# mv $LIB_DIR/share/info/* $VENDOR_DIR/share/info
-cd $BUILD_DIR
-
-echo "Installing libnettle"
-LIB_DIR=$BUILD_DIR/libnettle
-MAKE_DIR=$LIB_DIR/nettle-2.5
-DOWNLOAD_URL="https://ftp.gnu.org/gnu/nettle/nettle-2.5.tar.gz"
-mkdir $PREFIX_DIR
-
-
-mkdir -p $LIB_DIR
-mkdir $VENDOR_DIR/lib/pkgconfig
-mkdir $VENDOR_DIR/include/nettle
-mkdir $VENDOR_DIR/bin
-cd $LIB_DIR
-wget $DOWNLOAD_URL
-tar xf nettle-2.5.tar.gz
-cd nettle-2.5
-./configure --libdir=/app/.heroku/vendor/lib --prefix=$VENDOR_DIR \
-  --enable-shared
-make
-make install &&
-chmod -v 755 /usr/lib/libhogweed.so.2.5 /usr/lib/libnettle.so.4.4 &&
-install -v -m755 -d /app/.heroku/vendor/share/doc/nettle-2.5 &&
-install -v -m644 nettle.html /app/.heroku/vendor/share/doc/nettle-2.5
-cd ..
-# mv $LIB_DIR/lib/* $VENDOR_DIR/lib
-# mv $LIB_DIR/lib/pkgconfig/* $VENDOR_DIR/lib/pkgconfig
-# mv $LIB_DIR/include/nettle/* $VENDOR_DIR/include/nettle
-# mv $LIB_DIR/share/info/* $VENDOR_DIR/share/info
-# mv $LIB_DIR/bin/* $VENDOR_DIR/bin
-cd $BUILD_DIR
-
-echo "Installing gnutls"
-LIB_DIR=$BUILD_DIR/gnutls
-MAKE_DIR=$LIB_DIR/gnutls-3.1.5
-DOWNLOAD_URL="https://ftp.gnu.org/gnu/gnutls/gnutls-3.1.5.tar.xz"
-	
-mkdir $LIB_DIR
-cd $LIB_DIR
-wget $DOWNLOAD_URL
-tar xf gnutls-3.1.5.tar.xz
-cd gnutls-3.1.5
-./configure --prefix=$VENDOR_DIR
-make
-make install
-cd ..
-# mv $LIB_DIR/lib/* $VENDOR_DIR/lib
-# mv $LIB_DIR/include/* $VENDOR_DIR/include
-# mv $LIB_DIR/share/info/* $VENDOR_DIR/share/info
-cd $BUILD_DIR
 
 echo "Installing ffmpeg"
 LIB_DIR=$BUILD_DIR/ffmpeg
@@ -106,21 +24,9 @@ PKG_CONFIG_PATH="$LIB_DIR/lib/pkgconfig" ./configure \
   --extra-cflags="-I$VENDOR_DIR/include" \
   --extra-ldflags="-L$VENDOR_DIR/lib" \
   --bindir="$VENDOR_DIR/bin" \
-  --enable-gpl \
-  --enable-libass \
-  --enable-libfdk-aac \
-  --enable-libfreetype \
-  --enable-libmp3lame \
   --enable-libopus \
-  --enable-libtheora \
-  --enable-libvorbis \
-  --enable-libvpx \
-  --enable-libx264 \
-  --enable-libx265 \
   --enable-nonfree \
-  --enable-gmp \
-  --enable-gnutls \
-  --enable-version3 \
+  --enable-openssl \
   --disable-yasm
 make
 make install
