@@ -19,8 +19,8 @@ LIB_DIR=$BUILD_DIR/gmplib
 VENDOR_DIR=/app/.heroku/vendor
 mkdir $VENDOR_DIR/include
 mkdir $VENDOR_DIR/share/info
-LD_LIBRARY_PATH="$VENDOR_DIR/lib"
-DOWNLOAD_URL="https://gmplib.org/download/gmp/gmp-6.1.0.tar.xz"
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VENDOR_DIR/lib
+DOWNLOAD_URL="https://gmplib.org/download/gmp/archive/gmp-3.1.tar.xz"
 
 echo "DOWNLOAD_URL = " $DOWNLOAD_URL
 
@@ -28,15 +28,17 @@ cd $BUILD_DIR
 mkdir $LIB_DIR
 cd $LIB_DIR
 wget $DOWNLOAD_URL
-tar xf gmp-6.1.0.tar.xz
-cd gmp-6.1.0
-./configure --prefix=$LIB_DIR
+tar xf gmp-3.1.tar.xz
+cd gmp-3.1
+./configure --prefix=$VENDOR_DIR
 make
 make install
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$LIBDIR
+LD_RUN_PATH=$LD_RUN_PATH:$LIBDIR
 cd ..
-mv $LIB_DIR/lib/* $VENDOR_DIR/lib
-mv $LIB_DIR/include/* $VENDOR_DIR/include
-mv $LIB_DIR/share/info/* $VENDOR_DIR/share/info
+# mv $LIB_DIR/lib/* $VENDOR_DIR/lib
+# mv $LIB_DIR/include/* $VENDOR_DIR/include
+# mv $LIB_DIR/share/info/* $VENDOR_DIR/share/info
 cd $BUILD_DIR
 
 echo "Installing libnettle"
@@ -54,19 +56,19 @@ cd $LIB_DIR
 wget $DOWNLOAD_URL
 tar xf nettle-2.5.tar.gz
 cd nettle-2.5
-./configure --prefix=$LIB_DIR \
+./configure --libdir=/app/.heroku/vendor/lib --prefix=$VENDOR_DIR \
   --enable-shared
 make
 make install &&
-chmod   -v   755 /app/.heroku/vendor/lib/lib{hogweed,nettle}.so &&
+chmod -v 755 /usr/lib/libhogweed.so.2.5 /usr/lib/libnettle.so.4.4 &&
 install -v -m755 -d /app/.heroku/vendor/share/doc/nettle-2.5 &&
 install -v -m644 nettle.html /app/.heroku/vendor/share/doc/nettle-2.5
 cd ..
-mv $LIB_DIR/lib/* $VENDOR_DIR/lib
-mv $LIB_DIR/lib/pkgconfig/* $VENDOR_DIR/lib/pkgconfig
-mv $LIB_DIR/include/nettle/* $VENDOR_DIR/include/nettle
-mv $LIB_DIR/share/info/* $VENDOR_DIR/share/info
-mv $LIB_DIR/bin/* $VENDOR_DIR/bin
+# mv $LIB_DIR/lib/* $VENDOR_DIR/lib
+# mv $LIB_DIR/lib/pkgconfig/* $VENDOR_DIR/lib/pkgconfig
+# mv $LIB_DIR/include/nettle/* $VENDOR_DIR/include/nettle
+# mv $LIB_DIR/share/info/* $VENDOR_DIR/share/info
+# mv $LIB_DIR/bin/* $VENDOR_DIR/bin
 cd $BUILD_DIR
 
 echo "Installing gnutls"
@@ -79,13 +81,13 @@ cd $LIB_DIR
 wget $DOWNLOAD_URL
 tar xf gnutls-3.1.5.tar.xz
 cd gnutls-3.1.5
-./configure --prefix=$LIB_DIR
+./configure --prefix=$VENDOR_DIR
 make
 make install
 cd ..
-mv $LIB_DIR/lib/* $VENDOR_DIR/lib
-mv $LIB_DIR/include/* $VENDOR_DIR/include
-mv $LIB_DIR/share/info/* $VENDOR_DIR/share/info
+# mv $LIB_DIR/lib/* $VENDOR_DIR/lib
+# mv $LIB_DIR/include/* $VENDOR_DIR/include
+# mv $LIB_DIR/share/info/* $VENDOR_DIR/share/info
 cd $BUILD_DIR
 
 echo "Installing ffmpeg"
@@ -99,7 +101,7 @@ wget $DOWNLOAD_URL
 tar xf ffmpeg-3.0.2.tar.xz
 cd ffmpeg-3.0.2
 PKG_CONFIG_PATH="$LIB_DIR/lib/pkgconfig" ./configure \
-  --prefix="$LIB_DIR_DIR" \
+  --prefix=$VENDOR_DIR \
   --pkg-config-flags="--static" \
   --extra-cflags="-I$VENDOR_DIR/include" \
   --extra-ldflags="-L$VENDOR_DIR/lib" \
@@ -117,7 +119,9 @@ PKG_CONFIG_PATH="$LIB_DIR/lib/pkgconfig" ./configure \
   --enable-libx265 \
   --enable-nonfree \
   --enable-gmp \
-  --enable-gnutls
+  --enable-gnutls \
+  --enable-version3 \
+  --disable-yasm
 make
 make install
 make distclean
