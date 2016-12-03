@@ -34,7 +34,7 @@ cd $LIB_DIR
 wget $DOWNLOAD_URL
 tar xf opus-1.1.3.tar.gz
 cd $MAKE_DIR
-PKG_CONFIG_PATH="$VENDOR_DIR/lib/pkgconfig" ./config --prefix=$VENDOR_DIR
+PKG_CONFIG_PATH="$VENDOR_DIR/lib/pkgconfig" ./configure --prefix=$VENDOR_DIR
 make
 make install
 cd $BUILD_DIR
