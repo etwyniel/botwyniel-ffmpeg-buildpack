@@ -19,7 +19,7 @@ cd $LIB_DIR
 wget $DOWNLOAD_URL
 tar xf openssl-1.1.0c.tar.gz
 cd $MAKE_DIR
-PKG_CONFIG_PATH="$VENDOR_DIR/lib/pkgconfig" ./config --prefix=$VENDOR_DIR --OPENSSLDIR=$VENDOR_DIR./config
+PKG_CONFIG_PATH="$VENDOR_DIR/lib/pkgconfig" ./Configure --prefix=$VENDOR_DIR --OPENSSLDIR=$VENDOR_DIR./config
 make
 make install
 cd $BUILD_DIR
