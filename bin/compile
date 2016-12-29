@@ -41,14 +41,14 @@ cd $BUILD_DIR
 
 echo "Installing ffmpeg"
 LIB_DIR=$BUILD_DIR/ffmpeg
-MAKE_DIR=$LIB_DIR/ffmpeg-3.0.2
-DOWNLOAD_URL="http://johnvansickle.com/ffmpeg/release-source/ffmpeg-3.1.4.tar.xz"
+MAKE_DIR=$LIB_DIR/ffmpeg-3.2.2
+DOWNLOAD_URL="http://johnvansickle.com/ffmpeg/release-source/ffmpeg-3.2.2.tar.xz"
 
 mkdir $LIB_DIR
 cd $LIB_DIR
 wget $DOWNLOAD_URL
-tar xf ffmpeg-3.1.4.tar.xz
-cd ffmpeg-3.1.4
+tar xf ffmpeg-3.2.2.tar.xz
+cd ffmpeg-3.2.2
 PKG_CONFIG_PATH="$VENDOR_DIR/lib/pkgconfig" ./configure \
   --prefix=$VENDOR_DIR \
   --enable-libopus \
